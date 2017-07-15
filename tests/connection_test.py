@@ -131,3 +131,40 @@ class TestBridgeConnection(object):
         bridge = connection.Bridge.from_settings(source)
 
         assert bridge.to_settings() == expected_destination
+
+
+@pytest.mark.unit
+class TestEthernetConnection(object):
+
+    def test_read_and_write_settings(self):
+        source = {
+            '802-3-ethernet': {
+                'mac-address-blacklist': [],
+                's390-options': {}
+            },
+            'connection': {
+                'id': 'ethernet-eth0',
+                'interface-name': 'eth0',
+                'master': 'br0',
+                'slave-type': 'bridge',
+                'permissions': [],
+                'secondaries': [],
+                'type': '802-3-ethernet',
+                'uuid': 'c7560023-ac04-492a-beb2-5934589d74f4'
+            }
+        }
+        expected_destination = {
+            'connection': {
+                'id': 'ethernet-eth0',
+                'type': '802-3-ethernet',
+                'interface-name': 'eth0',
+                'autoconnect': True,
+                'autoconnect-priority': 0,
+                'master': '713c3d0a-56d1-4e27-a4e4-3bd86d0bbe1d',
+                'slave-type': 'bridge'
+            }
+        }
+
+        ethernet = connection.Ethernet.from_settings(source)
+
+        assert ethernet.to_settings() == expected_destination

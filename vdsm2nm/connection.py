@@ -53,6 +53,15 @@ class Bridge(Connection):
         ]))
 
 
+class Ethernet(Connection):
+
+    @staticmethod
+    def _fields():
+        return list(itertools.chain.from_iterable([
+            _connection_fields()
+        ]))
+
+
 def _connection_fields():
     return [
         Field(('connection', 'id')),
