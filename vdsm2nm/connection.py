@@ -20,6 +20,24 @@ class NoValue(object):
     pass
 
 
+class Field(object):
+
+    def __init__(self, keys, default=NoValue):
+        self._keys = keys
+        self._default = default
+        self._value = NoValue
+
+    def from_settings(self, settings):
+        self._value = rget(settings, self._keys, self._default)
+        if self._value == NoValue:
+            raise KeyError('Value not found.')
+
+    def to_settings(self, settings):
+        if self._value == NoValue:
+            raise ValueError('Value not set.')
+        rset(settings, self._keys, self._value)
+
+
 def rget(dictionary, keys, default=NoValue):
     if dictionary is NoValue:
         if default is not NoValue:

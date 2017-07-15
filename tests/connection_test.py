@@ -45,3 +45,52 @@ class TestDictionaryHelpers(object):
         destination = {}
         connection.rset(destination, ('foo', 'bar'), 1)
         assert destination == {'foo': {'bar': 1}}
+
+
+@pytest.mark.unit
+class TestField(object):
+
+    def test_read_and_write(self):
+        source = {'foo': 1, 'bar': 2}
+        expected_destination = {'foo': 1}
+        field = connection.Field(('foo',))
+
+        self._test_read_and_write(source, expected_destination, field)
+
+    def test_read_and_write_with_defaults(self):
+        source = {'bar': 2}
+        expected_destination = {'foo': 1}
+        field = connection.Field(('foo',), 1)
+
+        self._test_read_and_write(source, expected_destination, field)
+
+    def test_read_and_write_with_missing_destination_dictionary(self):
+        source = {'foo': {'bar': 1}}
+        expected_destination = {'foo': {'bar': 1}}
+        field = connection.Field(('foo',))
+
+        self._test_read_and_write(source, expected_destination, field)
+
+    def _test_read_and_write(self, source, expected_destination, field):
+        field.from_settings(source)
+
+        destination = {}
+        field.to_settings(destination)
+
+        assert destination == expected_destination
+
+    def test_read_and_write_missing_source_value(self):
+        source = {'bar': 2}
+
+        field = connection.Field(('foo',))
+
+        with pytest.raises(KeyError):
+            field.from_settings(source)
+
+    def test_write_without_reading(self):
+        field = connection.Field(('foo',))
+
+        destination = {}
+
+        with pytest.raises(ValueError):
+            field.to_settings(destination)
