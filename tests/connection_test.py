@@ -94,3 +94,40 @@ class TestField(object):
 
         with pytest.raises(ValueError):
             field.to_settings(destination)
+
+
+@pytest.mark.unit
+class TestBridgeConnection(object):
+
+    def test_read_and_write_settings(self):
+        source = {
+            'bridge': {
+                'forward-delay': 2,
+                'interface-name': 'br0'
+            },
+            'connection': {
+                'autoconnect': False,
+                'id': 'br0',
+                'interface-name': 'br0',
+                'permissions': [],
+                'secondaries': [],
+                'timestamp': 1500130827,
+                'type': 'bridge',
+                'uuid': '2b7437ec-b57d-4500-9886-31b53fa3628f'
+            }
+        }
+        expected_destination = {
+            'connection': {
+                'id': 'br0',
+                'type': 'bridge',
+                'interface-name': 'br0',
+                'autoconnect': False,
+                'autoconnect-priority': 0,
+                'master': None,
+                'slave-type': None
+            }
+        }
+
+        bridge = connection.Bridge.from_settings(source)
+
+        assert bridge.to_settings() == expected_destination

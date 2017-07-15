@@ -15,6 +15,55 @@
 
 from __future__ import absolute_import
 
+import abc
+import itertools
+
+import six
+
+
+@six.add_metaclass(abc.ABCMeta)
+class Connection(object):
+
+    @staticmethod
+    def _fields():
+        pass
+
+    @classmethod
+    def from_settings(cls, settings):
+        connection = Connection()
+        fields = cls._fields()
+        for field in fields:
+            field.from_settings(settings)
+        connection._fields = fields
+        return connection
+
+    def to_settings(self):
+        settings = {}
+        for field in self._fields:
+            field.to_settings(settings)
+        return settings
+
+
+class Bridge(Connection):
+
+    @staticmethod
+    def _fields():
+        return list(itertools.chain.from_iterable([
+            _connection_fields()
+        ]))
+
+
+def _connection_fields():
+    return [
+        Field(('connection', 'id')),
+        Field(('connection', 'type')),
+        Field(('connection', 'interface-name')),
+        Field(('connection', 'autoconnect'), True),
+        Field(('connection', 'autoconnect-priority'), 0),
+        Field(('connection', 'master'), None),
+        Field(('connection', 'slave-type'), None)
+    ]
+
 
 class NoValue(object):
     pass
