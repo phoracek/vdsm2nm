@@ -46,6 +46,8 @@ class Connection(object):
 
 class Bridge(Connection):
 
+    TYPE = 'bridge'
+
     @staticmethod
     def _fields():
         return list(itertools.chain.from_iterable([
@@ -54,6 +56,8 @@ class Bridge(Connection):
 
 
 class Ethernet(Connection):
+
+    TYPE = '802-3-ethernet'
 
     @staticmethod
     def _fields():
